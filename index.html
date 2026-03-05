@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeltAI — Scenario Planning Tool | Centre for Quantum and Society</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --purple: #655997;
+  --purple-light: #f0ecf8;
+  --black: #000000;
+  --text: #3c434a;
+  --muted: #888;
+  --border: #e5e5e5;
+  --bg-alt: #edf0f2;
+  --white: #ffffff;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--white);
+  line-height: 1.65;
+}
+
+a { color: var(--purple); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+
+/* ═══════════════ NAVIGATION ═══════════════ */
+.nav-bar {
+  width: 100%;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.nav-logo-mark {
+  width: 36px;
+  height: 36px;
+  background: var(--purple);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.nav-logo-text {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--black);
+  letter-spacing: 0.04em;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+.nav-links a:hover { color: var(--purple); text-decoration: none; }
+.nav-cta {
+  background: var(--purple);
+  color: #fff !important;
+  padding: 9px 20px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.nav-cta:hover { background: #4e4278; text-decoration: none !important; }
+
+
+/* ═══════════════ PAGE WRAPPER ═══════════════ */
+.page-wrap {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 52px 24px 80px;
+}
+
+
+/* ═══════════════ BREADCRUMB ═══════════════ */
+.breadcrumb {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.breadcrumb a { color: var(--muted); }
+.breadcrumb a:hover { color: var(--purple); }
+.breadcrumb-sep { opacity: 0.5; }
+
+
+/* ═══════════════ ARTICLE META ═══════════════ */
+.article-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 18px;
+  font-family: 'Roboto Mono', monospace;
+}
+.meta-tag {
+  background: var(--purple-light);
+  color: var(--purple);
+  padding: 3px 10px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.meta-dot { opacity: 0.4; }
+
+
+/* ═══════════════ HEADLINE ═══════════════ */
+h1 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 2.4rem;
+  color: var(--black);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 18px;
+}
+.article-lead {
+  font-size: 1.1rem;
+  color: var(--text);
+  font-weight: 400;
+  line-height: 1.6;
+  margin-bottom: 36px;
+  border-left: 3px solid var(--purple);
+  padding-left: 18px;
+}
+
+
+/* ═══════════════ HERO VISUAL ═══════════════ */
+.hero-visual {
+  width: 100%;
+  height: 360px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 48px;
+  border: 1px solid var(--border);
+}
+/* Background circles — DeltAI prominent state */
+.hero-circle {
+  position: absolute;
+  border-radius: 50%;
+}
+.hc1 { width: 700px; height: 700px; top: -280px; right: -180px;
+  background: radial-gradient(circle, transparent 30%, rgba(0,0,255,0.12) 50%, rgba(0,0,255,0.22) 65%, transparent 80%); }
+.hc2 { width: 600px; height: 600px; bottom: -280px; left: -180px;
+  background: radial-gradient(circle, transparent 25%, rgba(218,241,62,0.30) 45%, rgba(218,241,62,0.46) 60%, transparent 75%); }
+.hc3 { width: 400px; height: 400px; top: 20%; left: -100px;
+  background: radial-gradient(circle, transparent 30%, rgba(0,0,255,0.08) 50%, rgba(0,0,255,0.15) 65%, transparent 80%); }
+.hc4 { width: 500px; height: 500px; top: -80px; right: 20%;
+  background: radial-gradient(circle, transparent 30%, rgba(218,241,62,0.22) 48%, rgba(218,241,62,0.38) 62%, transparent 78%); }
+.hero-text-block {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.hero-org-label {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: #999;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.hero-brand {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 700;
+  font-size: 3.6rem;
+  letter-spacing: 0.04em;
+  color: #000;
+  margin-bottom: 10px;
+}
+.hero-tagline {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 1rem;
+  color: #777;
+  letter-spacing: 0.01em;
+}
+
+
+/* ═══════════════ BODY CONTENT ═══════════════ */
+h2 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.45rem;
+  color: var(--black);
+  letter-spacing: -0.01em;
+  margin: 48px 0 14px;
+}
+p {
+  margin-bottom: 18px;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+
+/* ═══════════════ TWO-COLUMN MODE SECTION ═══════════════ */
+.modes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 24px 0 32px;
+}
+.mode-card {
+  background: var(--bg-alt);
+  border-radius: 8px;
+  padding: 28px 24px;
+  border-top: 3px solid transparent;
+}
+.mode-card.mode-1 { border-top-color: var(--purple); }
+.mode-card.mode-2 { border-top-color: #000; }
+
+.mode-label {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.mode-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--black);
+  margin-bottom: 10px;
+}
+.mode-desc {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.55;
+  margin: 0;
+}
+
+
+/* ═══════════════ STEPS ═══════════════ */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 24px 0 32px;
+  border-left: 2px solid var(--border);
+  padding-left: 24px;
+}
+.step-item {
+  padding: 0 0 24px 0;
+  position: relative;
+}
+.step-item::before {
+  content: '';
+  position: absolute;
+  left: -31px;
+  top: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 2px solid var(--purple);
+}
+.step-num {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  color: var(--purple);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.step-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+.step-desc {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin: 0;
+}
+
+
+/* ═══════════════ DOWNLOADABLES ═══════════════ */
+.downloads-section {
+  margin: 48px 0 0;
+  padding: 36px 0 0;
+  border-top: 1px solid var(--border);
+}
+.downloads-heading {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.45rem;
+  color: var(--black);
+  letter-spacing: -0.01em;
+  margin-bottom: 24px;
+}
+.downloads-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+.download-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--white);
+  transition: border-color 0.15s;
+}
+.download-item:hover { border-color: var(--purple); }
+
+.dl-icon {
+  width: 44px;
+  height: 52px;
+  background: var(--bg-alt);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+/* Folded corner */
+.dl-icon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background: var(--border);
+  border-radius: 0 4px 0 0;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+.dl-type {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--purple);
+  text-transform: uppercase;
+}
+.dl-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--black);
+  line-height: 1.3;
+}
+.dl-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+  flex: 1;
+  margin: 0;
+}
+.dl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--purple);
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-top: 4px;
+  align-self: flex-start;
+  text-decoration: none;
+}
+.dl-btn:hover { background: #4e4278; text-decoration: none; }
+.dl-btn-outline {
+  background: var(--white);
+  color: var(--purple);
+  border: 1.5px solid var(--purple);
+}
+.dl-btn-outline:hover { background: var(--purple-light); }
+.dl-arrow { font-size: 11px; opacity: 0.8; }
+
+/* ═══════════════ CTA BOX ═══════════════ */
+.cta-box {
+  background: var(--purple-light);
+  border-radius: 8px;
+  padding: 36px 36px;
+  margin: 48px 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.cta-box-text h3 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+.cta-box-text p {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin: 0;
+}
+.cta-buttons {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.btn-primary {
+  background: var(--purple);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  display: inline-block;
+}
+.btn-primary:hover { background: #4e4278; text-decoration: none; }
+.btn-secondary {
+  background: var(--white);
+  color: var(--purple);
+  padding: 12px 22px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid var(--purple);
+  white-space: nowrap;
+  display: inline-block;
+}
+.btn-secondary:hover { background: var(--purple-light); text-decoration: none; }
+
+
+/* ═══════════════ CONTACT BOX ═══════════════ */
+.contact-box {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 40px;
+}
+.contact-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--purple);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+}
+.contact-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--black);
+  margin-bottom: 2px;
+}
+.contact-role {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.contact-email {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  color: var(--purple);
+}
+
+/* Tags */
+.tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+.tag {
+  font-size: 12px;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  color: var(--muted);
+}
+
+
+/* ═══════════════ FOOTER ═══════════════ */
+.footer {
+  background: #1a1a2e;
+  color: #ccc;
+  padding: 48px 48px 32px;
+  margin-top: 80px;
+}
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+.footer-brand {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.footer-desc {
+  font-size: 13px;
+  color: #999;
+  max-width: 280px;
+  line-height: 1.55;
+}
+.footer-newsletter-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.newsletter-row {
+  display: flex;
+  gap: 8px;
+}
+.newsletter-input {
+  flex: 1;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+}
+.newsletter-btn {
+  background: var(--purple);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #666;
+}
+.footer-socials {
+  display: flex;
+  gap: 16px;
+}
+.footer-socials a {
+  color: #666;
+  font-size: 12px;
+  font-family: 'Roboto Mono', monospace;
+  letter-spacing: 0.04em;
+}
+.footer-socials a:hover { color: #fff; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav class="nav-bar">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark">Q4G</div>
+    <span class="nav-logo-text">Quantum for Good</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Projects</a></li>
+    <li><a href="#">Use Cases</a></li>
+    <li><a href="#">Resources</a></li>
+    <li><a href="#">News &amp; Events</a></li>
+    <li><a href="#" class="nav-cta">Get in touch</a></li>
+  </ul>
+</nav>
+
+
+<!-- ═══ ARTICLE ═══ -->
+<div class="page-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Home</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="#">Tools</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>DeltAI</span>
+  </div>
+
+  <!-- Metadata -->
+  <div class="article-meta">
+    <span>2025</span>
+    <span class="meta-dot">·</span>
+    <span class="meta-tag">Tool</span>
+    <span class="meta-dot">·</span>
+    <span>3 min read</span>
+  </div>
+
+  <!-- Headline -->
+  <h1>DeltAI — AI-Guided Scenario Planning for Disruptive Technologies</h1>
+
+  <p class="article-lead">
+    How will quantum computing, artificial intelligence, and robotics reshape your sector over the next 25 years? DeltAI turns that question into a structured, AI-powered group experience — no expertise required.
+  </p>
+
+  <!-- Hero Visual -->
+  <div class="hero-visual">
+    <div class="hero-circle hc1"></div>
+    <div class="hero-circle hc2"></div>
+    <div class="hero-circle hc3"></div>
+    <div class="hero-circle hc4"></div>
+    <div class="hero-text-block">
+      <div class="hero-org-label">Centre for Quantum and Society</div>
+      <div class="hero-brand">DeltAI</div>
+      <div class="hero-tagline">Exploring the future of Disruptive Technologies</div>
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <p>
+    Organisations across every sector are confronted by the same challenge: disruptive technologies — from quantum computing to AI to advanced robotics — are approaching practical deployment, yet their implications are difficult to think through in a concrete, structured way. Conventional strategy sessions rarely go far enough into the future, and the futures that are explored rarely feel grounded in real technological trajectories.
+  </p>
+  <p>
+    DeltAI is a facilitated scenario planning tool developed by the Centre for Quantum and Society. It guides groups through a set of AI-generated futures — from 2050 and working backwards to the near present — enabling teams to explore, discuss, and reflect on the long-term implications of disruptive technologies for their organisation.
+  </p>
+
+
+  <!-- How does it work -->
+  <h2>How does it work?</h2>
+  <p>
+    A moderator sets up a session in minutes. Participants join on their own devices via a shared session code. The tool then leads the group through three time-horizon scenarios, each generated in real time by an AI model trained on sector-specific technology analyses.
+  </p>
+
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">Step 01</div>
+      <div class="step-title">Configure the session</div>
+      <p class="step-desc">The moderator selects a sector and two disruptive technologies, then sets the scenario axes: resource outlook (abundance vs. limits) and system stability (stable vs. breaks). This takes under two minutes.</p>
+    </div>
+    <div class="step-item">
+      <div class="step-num">Step 02</div>
+      <div class="step-title">Participants join on their devices</div>
+      <p class="step-desc">Viewers enter a four-character session code and their screens follow the moderator automatically — no app, no account, no friction.</p>
+    </div>
+    <div class="step-item">
+      <div class="step-num">Step 03</div>
+      <div class="step-title">AI generates three futures</div>
+      <p class="step-desc">The tool produces scenarios for 2050+, 2030–2040, and 2025–2030, each grounded in the chosen technologies and sector context. Text streams in live, visible to all participants simultaneously.</p>
+    </div>
+    <div class="step-item">
+      <div class="step-num">Step 04</div>
+      <div class="step-title">Reflect, intervene, and capture insights</div>
+      <p class="step-desc">The moderator guides group discussion at each time horizon. A final intervention prompt invites the group to propose a strategic response — and the AI generates the consequences of that choice.</p>
+    </div>
+  </div>
+
+
+  <!-- Two ways to use -->
+  <h2>Two ways to use DeltAI</h2>
+  <p>
+    DeltAI is designed to work in two distinct settings, each requiring a different level of preparation.
+  </p>
+
+  <div class="modes-grid">
+    <div class="mode-card mode-1">
+      <div class="mode-label">Mode 01</div>
+      <div class="mode-title">Self-service at events</div>
+      <p class="mode-desc">DeltAI ships with pre-configured sector profiles across government, healthcare, critical infrastructure, finance, and culture. A facilitator can open the tool, choose a sector, and run a session in minutes — no setup required. Suited to conferences, lectures, or public events.</p>
+    </div>
+    <div class="mode-card mode-2">
+      <div class="mode-label">Mode 02</div>
+      <div class="mode-title">CQS-facilitated workshop</div>
+      <p class="mode-desc">For deeper engagements, CQS prepares a custom organisation passport before the session — mapping the client's mission, stakeholders, and strategic priorities to the tool's technology analyses. The moderator arrives at a session that is already tailored to their organisation.</p>
+    </div>
+  </div>
+
+
+  <!-- Why it matters -->
+  <h2>Why it matters</h2>
+  <p>
+    Quantum technologies, large-scale AI systems, and advanced robotics are no longer purely theoretical. Deployment timelines are compressing. Organisations that have not yet developed an intuition for these futures — what they might look like, what decisions they would require — risk being caught unprepared.
+  </p>
+  <p>
+    DeltAI does not predict the future. It makes futures thinkable. By anchoring group discussion in AI-generated scenarios rather than speculation, it allows teams to have concrete, productive conversations about long-term technological change — within a single workshop session.
+  </p>
+  <p>
+    The tool is freely available for non-commercial facilitation use. It was developed as part of the graduation project of Rixt Bijker at the Centre for Quantum and Society, TU Delft.
+  </p>
+
+
+  <!-- Downloadables -->
+  <div class="downloads-section">
+    <div class="downloads-heading">Downloadables</div>
+    <div class="downloads-grid">
+
+      <!-- Card Deck -->
+      <div class="download-item">
+        <div class="dl-icon"><span class="dl-type">PDF</span></div>
+        <div class="dl-title">DeltAI Facilitation Card Deck</div>
+        <p class="dl-desc">Printable attitude and archetype cards used during the setup phase of a DeltAI session. Designed for table use in workshops and events.</p>
+        <a href="#" class="dl-btn">Download PDF <span class="dl-arrow">↓</span></a>
+      </div>
+
+      <!-- Manual -->
+      <div class="download-item">
+        <div class="dl-icon"><span class="dl-type">PDF</span></div>
+        <div class="dl-title">Facilitator Manual</div>
+        <p class="dl-desc">Step-by-step guide for moderators. Covers session setup, screen-by-screen flow, facilitation tips for each time horizon, and the intervention phase.</p>
+        <a href="#" class="dl-btn">Download PDF <span class="dl-arrow">↓</span></a>
+      </div>
+
+      <!-- Tech documents -->
+      <div class="download-item">
+        <div class="dl-icon"><span class="dl-type">DOC</span></div>
+        <div class="dl-title">Technology Sector Analyses</div>
+        <p class="dl-desc">The underlying research documents mapping six disruptive technologies to sector-specific contexts. These feed directly into DeltAI's AI generation pipeline and are freely available under Creative Commons.</p>
+        <a href="#" class="dl-btn dl-btn-outline">View documents <span class="dl-arrow">→</span></a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <div class="cta-box-text">
+      <h3>Try DeltAI with your team</h3>
+      <p>Open the tool directly in your browser — no account needed. For a tailored workshop, get in touch with CQS.</p>
+    </div>
+    <div class="cta-buttons">
+      <a href="https://2alliander.vercel.app" class="btn-primary" target="_blank">Open DeltAI →</a>
+      <a href="mailto:cqs@quantumdelta.nl" class="btn-secondary">Contact CQS</a>
+    </div>
+  </div>
+
+
+  <!-- Contact -->
+  <div class="contact-box">
+    <div class="contact-avatar">DN</div>
+    <div>
+      <div class="contact-name">Deborah Nas</div>
+      <div class="contact-role">Innovation Lead · Centre for Quantum &amp; Society</div>
+      <a href="mailto:d.n.nas@tudelft.nl" class="contact-email">d.n.nas@tudelft.nl</a>
+    </div>
+  </div>
+
+  <!-- Tags -->
+  <div class="tags-row">
+    <span class="tag">Scenario Planning</span>
+    <span class="tag">Quantum Computing</span>
+    <span class="tag">AI Tools</span>
+    <span class="tag">Futures Thinking</span>
+    <span class="tag">Workshop</span>
+    <span class="tag">Facilitation</span>
+    <span class="tag">Disruptive Technologies</span>
+  </div>
+
+</div><!-- /page-wrap -->
+
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand">QUANTUM FOR GOOD</div>
+      <p class="footer-desc">Centre for Quantum and Society — exploring the societal implications of quantum technologies.</p>
+    </div>
+    <div>
+      <div class="footer-newsletter-label">Sign up for our newsletter</div>
+      <div class="newsletter-row">
+        <input class="newsletter-input" type="email" placeholder="your@email.com">
+        <button class="newsletter-btn">Subscribe</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 · All Rights Reserved · Quantum Delta NL · cqs@quantumdelta.nl</span>
+    <div class="footer-socials">
+      <a href="#">X / Twitter</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Email</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
